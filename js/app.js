@@ -126,7 +126,15 @@ function pastelFrom(h,s){const S=Math.max(30,Math.min(75,s));let L=46,acc;do{acc
   return{a:hslToHex(h,Math.min(85,S+5),96),b:hslToHex(h,Math.min(80,S),87),accent:acc}}
 function loadCustom(){try{return JSON.parse(localStorage.getItem(CUSTOM_KEY)||"[]")}catch{return[]}}
 function saveCustom(list){try{localStorage.setItem(CUSTOM_KEY,JSON.stringify(list))}catch{}}
+/* 기본 분류(data/categories.json)의 이름·색을 브라우저에서 고쳐 쓴 값. id는 그대로라 추천 규칙·저장 내역 연결은 유지된다. */
+const CATEDIT_KEY="ysr-thumb:cat-edits";
+const CAT_DEFAULTS=Object.fromEntries(BUILTIN.map(k=>[k,{...CATS[k]}]));
+const isHex=v=>/^#[0-9a-f]{6}$/i.test(v||"");
+function loadCatEdits(){try{const o=JSON.parse(localStorage.getItem(CATEDIT_KEY)||"{}");return o&&typeof o==="object"&&!Array.isArray(o)?o:{}}catch{return{}}}
+function saveCatEdits(o){try{localStorage.setItem(CATEDIT_KEY,JSON.stringify(o))}catch{}}
 function syncCustomCats(){for(const k of Object.keys(CATS))if(!BUILTIN.includes(k))delete CATS[k];
+  const ed=loadCatEdits();for(const k of BUILTIN){const d=CAT_DEFAULTS[k],e=ed[k];
+    CATS[k]=e&&typeof e==="object"?{...d,label:String(e.label||"").trim().slice(0,14)||d.label,a:isHex(e.a)?e.a:d.a,b:isHex(e.b)?e.b:d.b,accent:isHex(e.accent)?e.accent:d.accent,edited:true}:{...d}}
   for(const c of loadCustom())CATS[c.id]={label:c.label,a:c.a,b:c.b,accent:c.accent,desc:"사용자가 만든 분류: "+c.label,custom:true}}
 function renderCats(sel){
   const cur=sel||document.querySelector('input[name=cat]:checked')?.value||"exchange";
@@ -145,19 +153,44 @@ $("#pal").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)
 $("#palNear").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;catSel=nearList[+b.dataset.i];drawPal()});
 $("#catPick").addEventListener("input",()=>{makeNear();catSel=nearList[2];drawPal()});
 $("#catName").addEventListener("input",drawCatPrev);
-$("#catAdd").onclick=()=>{const on=$("#catForm").classList.toggle("on");$("#catAdd").setAttribute("aria-expanded",on);if(on){makeNear();drawPal();$("#catName").focus()}};
-$("#catCancel").onclick=()=>{$("#catForm").classList.remove("on");$("#catAdd").setAttribute("aria-expanded","false");$("#catStatus").textContent=""};
+let catEditId=null,catWasEdit=false;
+function openCatForm(id,focus){
+  const c=id?CATS[id]:null;catEditId=c?id:null;
+  if(c){$("#catName").value=c.label;catSel=PALETTE.find(p=>p.a===c.a&&p.b===c.b&&p.accent===c.accent)||{a:c.a,b:c.b,accent:c.accent};
+    $("#catFormTitle").textContent=`‘${c.label}’ 분류 수정`;catWasEdit=true}
+  else if(catWasEdit){$("#catName").value="";catSel=PALETTE[0];catWasEdit=false}
+  $("#catFormHead").hidden=!c;$("#catReset").hidden=!(c&&c.edited);$("#catStatus").textContent="";
+  $("#catForm").classList.add("on");$("#catAdd").setAttribute("aria-expanded",!c);$("#catEdit").setAttribute("aria-expanded",!!c);
+  makeNear();drawPal();if(focus!==false)$("#catName").focus()}
+function closeCatForm(){catEditId=null;$("#catForm").classList.remove("on");$("#catAdd").setAttribute("aria-expanded","false");$("#catEdit").setAttribute("aria-expanded","false");$("#catStatus").textContent=""}
+function afterCatChange(){syncCustomCats();renderCats();for(const k in presetThumbs)delete presetThumbs[k];for(const k in altThumbCache)delete altThumbCache[k];update();refreshAlts(true)}
+$("#catAdd").onclick=()=>{if($("#catForm").classList.contains("on")&&!catEditId)closeCatForm();else openCatForm(null)};
+$("#catEdit").onclick=()=>{const id=document.querySelector('input[name=cat]:checked')?.value;if($("#catForm").classList.contains("on")&&catEditId===id)closeCatForm();else openCatForm(id)};
+$("#cats").addEventListener("change",()=>{if(catEditId)openCatForm(document.querySelector('input[name=cat]:checked')?.value,false)});
+$("#catCancel").onclick=closeCatForm;
+$("#catReset").onclick=()=>{const id=catEditId,d=CAT_DEFAULTS[id];if(!d)return;
+  if(Object.entries(CATS).some(([k,c])=>k!==id&&c.label===d.label)){$("#catStatus").textContent=`‘${d.label}’ 이름을 다른 분류가 쓰고 있어 되돌릴 수 없어요. 그 분류의 이름을 먼저 바꿔 주세요.`;return}
+  if(!confirm(`‘${CATS[id].label}’ 분류를 기본값(‘${d.label}’)으로 되돌릴까요?`))return;
+  const ed=loadCatEdits();delete ed[id];saveCatEdits(ed);closeCatForm();afterCatChange()};
 $("#catSave").onclick=()=>{
   const name=$("#catName").value.trim();
   if(!name){$("#catStatus").textContent="분류 이름을 입력하세요.";$("#catName").focus();return}
+  if(catEditId){const id=catEditId;
+    if(Object.entries(CATS).some(([k,c])=>k!==id&&c.label===name)){$("#catStatus").textContent="같은 이름의 분류가 이미 있습니다.";return}
+    const v={label:name,a:catSel.a,b:catSel.b,accent:catSel.accent};
+    if(BUILTIN.includes(id)){const ed=loadCatEdits(),d=CAT_DEFAULTS[id];
+      if(v.label===d.label&&v.a===d.a&&v.b===d.b&&v.accent===d.accent)delete ed[id];else ed[id]=v;saveCatEdits(ed)}
+    else saveCustom(loadCustom().map(c=>c.id===id?{...c,...v}:c));
+    closeCatForm();afterCatChange();return}
   if(Object.values(CATS).some(c=>c.label===name)){$("#catStatus").textContent="같은 이름의 분류가 이미 있습니다.";return}
   const list=loadCustom();const id="c_"+Date.now().toString(36);
   list.push({id,label:name,a:catSel.a,b:catSel.b,accent:catSel.accent});saveCustom(list);syncCustomCats();renderCats(id);
-  $("#catName").value="";$("#catForm").classList.remove("on");$("#catAdd").setAttribute("aria-expanded","false");$("#catStatus").textContent="";
+  $("#catName").value="";closeCatForm();
   update();refreshAlts(true);
 };
 $("#cats").addEventListener("click",e=>{const d=e.target.closest("[data-del]");if(!d)return;e.preventDefault();e.stopPropagation();
-  const id=d.dataset.del,lab=CATS[id]?.label;if(!confirm(`‘${lab}’ 분류를 삭제할까요? 이 분류로 만든 썸네일은 ‘공통·설정’으로 바뀝니다.`))return;
+  const id=d.dataset.del,lab=CATS[id]?.label;if(!confirm(`‘${lab}’ 분류를 삭제할까요? 이 분류로 만든 썸네일은 ‘${CATS.common.label}’(으)로 바뀝니다.`))return;
+  if(catEditId===id)closeCatForm();
   saveCustom(loadCustom().filter(c=>c.id!==id));const wasSel=document.querySelector('input[name=cat]:checked')?.value===id;syncCustomCats();renderCats(wasSel?"common":undefined);
   for(const k in presetThumbs)delete presetThumbs[k];for(const k in altThumbCache)delete altThumbCache[k];update();refreshAlts(true)});
 optList($("#main"),true);optList($("#sub"),true);
@@ -386,7 +419,7 @@ function drawPicker(){
 }
 $("#pq").addEventListener("input",drawPicker);$("#pmode").addEventListener("change",drawPicker);
 $("#pgrid").addEventListener("click",e=>{const b=e.target.closest("button[data-id]");if(!b)return;
-  if($("#pmode").value==="sub"&&state().cat==="claim"){$("#altStatus").textContent="청구·보고 분류는 보조 오브젝트를 쓰지 않습니다.";return}
+  if($("#pmode").value==="sub"&&state().cat==="claim"){$("#altStatus").textContent=`${CATS.claim.label} 분류는 보조 오브젝트를 쓰지 않습니다.`;return}
   useAlt(b.dataset.id,$("#pmode").value==="sub");drawPicker()});
 /* prompt */
 function buildPrompt(title,desc){
@@ -408,12 +441,12 @@ ${ASSETS.map(a=>`- ${a.id} | ${a.name} | ${a.series}${a.person?"(의료인:"+(RO
 7. 달러($) 표기가 있는 화폐 오브젝트(coins, cash_wings, wallet, money_bag, coin_wings, hand_cash, building_coins)는 비용·수납·청구·지원금 의미가 기능의 핵심일 때만 사용.
 8. 얼굴이 있는 로봇(robot_chart, robot_check, robot_monitor)은 AI 기능 가이드에만 사용. AI가 아닌 자동화 기능은 box_wings, gear 등 다른 오브젝트 우선.
 9. 기능명에 쓰인 단어와 키워드가 겹친다는 이유만으로 고르지 말고, 사용자가 그 기능으로 하는 행위(조회·작성·제출·전송·수납·관리)를 기준으로 고를 것.
-10. category가 claim(청구·보고)이면 main은 영수증·보고서·서식 형태(receipt_check, receipt_shield, phone_receipt, clipboard_blue, clipboard_pencil, clipboard_mint) 중에서 고르고 sub는 빈 문자열. 배송·택배 오브젝트(truck_side, truck_34, box_pin, box_wings, hand_box, shop_bag)는 claim에 쓰지 말 것.
+10. category가 claim(${CATS.claim.label})이면 main은 영수증·보고서·서식 형태(receipt_check, receipt_shield, phone_receipt, clipboard_blue, clipboard_pencil, clipboard_mint) 중에서 고르고 sub는 빈 문자열. 배송·택배 오브젝트(truck_side, truck_34, box_pin, box_wings, hand_box, shop_bag)는 claim에 쓰지 말 것.
 11. 하트·손 오브젝트(heart_*)는 색 접미사를 분류에 맞출 것: exchange는 _blue, care는 _mint. 두 손(heart_hands2_*)은 주고받는 교류, 한 손(heart_hand1_*)은 한쪽에서 제공·지원하는 기능.
 12. 시리즈 P(의료인 인물)는 그 직군이 직접 하는 일(의사=진료·처방, 간호사=간호·투약·교육, 약사=조제·복약지도, 치료사=치료·재활, 원무=접수·수납·예약)이 기능의 핵심일 때만 main으로 사용. 인물은 한 썸네일에 1명만, sub에 인물을 넣지 말 것. claim 분류에는 쓰지 말 것.
 
 [출력] JSON 하나만 출력
-{"category":"exchange|claim|care|common","main":"오브젝트 id","sub":"오브젝트 id 또는 빈 문자열","fit":"good|weak","reason":"한 문장 근거","missing":"fit이 weak일 때 필요한 에셋 설명, 아니면 빈 문자열"}
+{"category":"${Object.keys(CATS).join("|")}","main":"오브젝트 id","sub":"오브젝트 id 또는 빈 문자열","fit":"good|weak","reason":"한 문장 근거","missing":"fit이 weak일 때 필요한 에셋 설명, 아니면 빈 문자열"}
 
 [가이드 제목] ${title}
 [기능 설명] ${desc}`}

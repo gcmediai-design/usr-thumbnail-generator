@@ -1,6 +1,15 @@
 [
-  {"id": "exchange", "label": "진료정보교류·연계", "a": "#EEF4FD", "b": "#D3E3FA", "accent": "#0066E3", "desc": "다른 기관·외부 서비스와 정보를 주고받는 기능 (의뢰·회송, 진료정보교류, 외부 연동)"},
-  {"id": "claim", "label": "청구·보고", "a": "#FFF6E6", "b": "#FBE1B4", "accent": "#A86400", "desc": "급여·비급여 청구, 기관 보고, 수가 관리 기능"},
-  {"id": "care", "label": "환자·건강관리", "a": "#EAF7F3", "b": "#C9EADF", "accent": "#0B7A6B", "desc": "환자 관리·소통, 만성질환, 교육·상담 기록 기능"},
-  {"id": "common", "label": "공통·설정", "a": "#F2F4F7", "b": "#DCE2EA", "accent": "#4A5565", "desc": "설정, 화면 개편, 위 셋에 속하지 않는 기능"}
+  {"id": "reception", "label": "접수·예약", "a": "#F4F1FD", "b": "#E1D9F8", "accent": "#6B4FD8", "desc": "환자 접수, 예약, 대기 관리"},
+  {"id": "treatment", "label": "진료", "a": "#EFF1FD", "b": "#D6DBF8", "accent": "#4453C7", "desc": "진료 기록, 상병 입력, 진료 화면"},
+  {"id": "prescription", "label": "처방", "a": "#FFF1F0", "b": "#FAD6D2", "accent": "#C03A2F", "desc": "약 처방, 처방 묶음, DUR 점검"},
+  {"id": "exam", "label": "검사", "a": "#EAF7FA", "b": "#C8EAF2", "accent": "#0B6F87", "desc": "검사 오더, 검사 결과 조회, 영상"},
+  {"id": "payment", "label": "수납", "a": "#FFF4EF", "b": "#FBDDCE", "accent": "#B85226", "desc": "본인부담금, 영수증, 카드 결제"},
+  {"id": "claim", "label": "청구·보고", "a": "#FFF6E6", "b": "#FBE1B4", "accent": "#A86400", "desc": "건강보험 청구, 심평원·공단 제출 자료"},
+  {"id": "exchange", "label": "의뢰·회송", "a": "#EEF4FD", "b": "#D3E3FA", "accent": "#0066E3", "desc": "진료의뢰서·회송서, 진료정보교류"},
+  {"id": "care", "label": "환자관리", "a": "#EAF7F3", "b": "#C9EADF", "accent": "#0B7A6B", "desc": "고객 관리, 만성질환 관리, 문자 발송"},
+  {"id": "document", "label": "서식·문서", "a": "#F1F7ED", "b": "#D9EBCF", "accent": "#3F7A2A", "desc": "진단서, 소견서, 동의서, 각종 증명서"},
+  {"id": "integration", "label": "외부 연동", "a": "#FCF1F7", "b": "#F5DAE9", "accent": "#B83C78", "desc": "외부 앱·기관·장비와 연결"},
+  {"id": "stats", "label": "통계", "a": "#FFF9E5", "b": "#F8EBB4", "accent": "#8C6A00", "desc": "진료·매출 통계, 리포트"},
+  {"id": "settings", "label": "설정·관리", "a": "#F6F3EE", "b": "#E7DFD2", "accent": "#6F5B3E", "desc": "사용자 권한, 병원 정보, 환경 설정"},
+  {"id": "common", "label": "기타", "a": "#F2F4F7", "b": "#DCE2EA", "accent": "#4A5565", "desc": "위 분류에 맞지 않는 기능"}
 ]

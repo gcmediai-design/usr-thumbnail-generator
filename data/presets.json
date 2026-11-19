@@ -2,7 +2,7 @@
   {"file": "crmv2", "title": "새로운 의사랑 CRM", "cat": "care", "main": "phone_hand", "sub": ""},
   {"file": "eform-referral", "title": "[e-Form] 진료의뢰·회송", "cat": "exchange", "main": "hospital", "sub": "ambulance", "ped": "off"},
   {"file": "mychart-referral-support-program", "title": "[마이차트] 상종/포괄2차 지원사업", "cat": "exchange", "main": "building_coins", "sub": ""},
-  {"file": "wellcheck", "title": "웰체크 연동", "cat": "exchange", "main": "stetho_heart", "sub": ""},
+  {"file": "wellcheck", "title": "웰체크 연동", "cat": "integration", "main": "stetho_heart", "sub": ""},
   {"file": "manual-therapy-management", "title": "급여 도수치료 관리", "cat": "claim", "main": "receipt_shield", "sub": ""},
   {"file": "reporting-non-reimbursable", "title": "비급여 보고 자동 제출", "cat": "claim", "main": "receipt_check", "sub": "", "default": true},
   {"file": "chronic-disease-management", "title": "만성질환관리 교육 기록", "cat": "care", "main": "heart_pulse", "sub": "clipboard_mint", "scale": 88},

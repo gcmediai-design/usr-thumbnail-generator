@@ -402,6 +402,13 @@ a{color:var(--ds-brand)}
 .hacts .btn{flex:1;padding-left:0;padding-right:0;font-size:13px}
 .hacts .hdel{flex:0 0 auto;padding:0 var(--ds-s12);color:var(--ds-danger)}
 .hacts .hdel:hover{background:var(--ds-danger-r)}
+.catacts{display:flex;gap:var(--ds-s6);margin-top:var(--ds-s8)}
+.catacts .btn{flex:1;min-width:0;padding-left:0;padding-right:0;white-space:nowrap}
+.catacts .btn[aria-expanded="true"]{background:var(--ds-bg-inverted);color:var(--ds-content-inverted)}
+.catform-head{margin-bottom:var(--ds-s12)}
+.catform-head b{display:block;font-size:14px;line-height:20px}
+.catform-head .hint{display:block;margin:var(--ds-s4) 0 0}
+#catReset{width:100%;box-sizing:border-box;margin-top:var(--ds-s8)}
 .ped-row{display:flex;align-items:center;gap:var(--ds-s12);margin-top:var(--ds-s12);position:relative}
 .ped-lab{flex:none;font-size:13px;line-height:18px;color:var(--ds-content-additive);min-width:44px}
 .ped-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--ds-s6);flex:1}
