@@ -1,0 +1,19 @@
+{
+  "claimOk": ["receipt_check", "receipt_shield", "phone_receipt", "clipboard_blue", "clipboard_pencil", "clipboard_mint"],
+  "delivery": ["truck_side", "truck_34", "box_pin", "box_wings", "hand_box", "shop_bag"],
+  "faceRobot": ["robot_chart", "robot_check", "robot_monitor"],
+  "affinity": {
+    "exchange": ["hospital", "ambulance", "phone_search", "folder", "heart_hands2_blue", "heart_hand1_blue", "building_coins", "stetho_heart", "box_pin", "gear"],
+    "claim": ["receipt_check", "receipt_shield", "phone_receipt", "clipboard_blue", "clipboard_pencil", "clipboard_mint"],
+    "care": ["heart_pulse", "clipboard_mint", "hand_like", "heart_hands2_mint", "heart_hand1_mint", "phone_hand", "hand_pills", "stetho_heart", "pill_bottle", "clipboard_profile"],
+    "common": ["gear", "robot_hand_ai", "folder", "phone_search", "clipboard_blue"]
+  },
+  "roles": {
+    "doctor": {"label": "의사", "kw": "의사, 진료, 진찰, 처방, 의료진"},
+    "nurse": {"label": "간호사", "kw": "간호사, 간호, 투약, 환자 관리, 교육"},
+    "pharmacist": {"label": "약사", "kw": "약사, 조제, 복약지도, 처방전, 약국"},
+    "therapist": {"label": "치료사", "kw": "치료사, 물리치료, 도수치료, 재활"},
+    "staff": {"label": "원무·코디네이터", "kw": "원무, 접수, 수납, 예약, 안내"}
+  },
+  "styleRefs": ["hospital", "scale", "stethoscope", "bar_growth"]
+}
