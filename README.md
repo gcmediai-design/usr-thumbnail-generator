@@ -2,7 +2,7 @@
 
 GitBook 기능 가이드 카드에 넣을 커버 이미지(1600×900 PNG)를 같은 규칙으로 만드는 사내 도구입니다.
 
-- 접속 주소: https://jay0479-design.github.io/ysr-thumbnail-generator/
+- 접속 주소: https://gemediai-design.github.io/ysr-thumbnail-generator/
 - 설치할 것 없이 브라우저에서 바로 씁니다.
 - `main` 브랜치에 push하면 1~2분 뒤 자동으로 다시 배포됩니다.
 
